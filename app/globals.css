@@ -1,26 +1,609 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ──────────────────────────────────────────────────────────────
+   Design system: "Survey Noir"
+   Dark by default (void). Bands opt into paper with
+   data-theme="paper" or carbon with data-theme="carbon".
+   Stage colours are DATA ONLY: scan red, model cyan, map yellow.
+   The CTA is map yellow. Frosted, softly rounded glass panels sit
+   over the 3D film; elsewhere hairlines and flat surfaces.
+   Component code keeps shadcn/ui token names (bg-background,
+   text-muted-foreground, bg-primary …), aliased below.
+   ────────────────────────────────────────────────────────────── */
+
+@custom-variant paper (&:where([data-theme="paper"], [data-theme="paper"] *));
+/* The site is dark by design; shadcn "dark:" classes must not follow the OS setting */
+@custom-variant dark (&:where(.dark-variant-off, .dark-variant-off *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-ink: var(--ink);
+  --color-fog: var(--muted-fg);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-scan: #ff5a36;
+  --color-model: #3ecfd2;
+  --color-map: #f4c430;
+  --color-void: #0a0e0d;
+  --color-bone: #ece9e0;
+  --color-canvas: var(--surface);
+  --shadow-card: none;
+  --shadow-lift: none;
+
+  /* shadcn/ui aliases */
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--ink);
+  --color-primary: #f4c430;
+  --color-primary-foreground: #0a0e0d;
+  --color-secondary: var(--raised);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--raised);
+  --color-muted-foreground: var(--muted-fg);
+  --color-accent: var(--raised);
+  --color-accent-foreground: var(--ink);
+  --color-destructive: var(--danger);
+  --color-border: var(--line);
+  --color-input: var(--line-strong);
+  --color-ring: var(--focus);
+  --color-brand: var(--accent-text);
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-inter), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --default-transition-duration: 300ms;
+  --default-transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-marquee: marquee var(--duration) infinite linear;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root,
+[data-theme="void"] {
+  --bg: #0a0e0d;
+  --surface: #121816;
+  --raised: #1d2522;
+  --ink: #eceae2;
+  --muted-fg: #8e9791;
+  --line: rgba(236, 234, 226, 0.1);
+  --line-strong: rgba(236, 234, 226, 0.34);
+  --accent-text: #f4c430;
+  --focus: #f4c430;
+  --danger: #ff6b5a;
+  --grid-dot: rgba(236, 234, 226, 0.05);
+  color-scheme: dark;
+}
+
+[data-theme="carbon"] {
+  --bg: #121816;
+  --surface: #1d2522;
+  --raised: #25302c;
+}
+
+[data-theme="paper"] {
+  --bg: #ece9e0;
+  --surface: #e0dcd0;
+  --raised: #d6d1c3;
+  --ink: #0a0e0d;
+  --muted-fg: #59615c;
+  --line: rgba(10, 14, 13, 0.12);
+  --line-strong: rgba(10, 14, 13, 0.4);
+  --accent-text: #7a5a00;
+  --focus: #0a0e0d;
+  --danger: #b42318;
+  --grid-dot: rgba(10, 14, 13, 0.06);
+  color-scheme: light;
+}
+
+@layer base {
+  [data-theme]:not(.glass) {
+    background-color: var(--bg);
+    color: var(--ink);
+  }
+
+  *,
+  ::after,
+  ::before {
+    border-color: var(--line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
+    scroll-padding-bottom: 6rem;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Focus: yellow on dark, void on paper */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: #f4c430;
+  color: #0a0e0d;
+}
+
+/* Shape: soft rounded glass panels; corner ticks only on data elements */
+/* ── Type helpers ──────────────────────────────────────────── */
+.t-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(48px, min(11vw, 15svh), 184px);
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+}
+.t-h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(36px, 6vw, 96px);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+.t-h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(22px, 2.2vw, 34px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.t-mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Texture ───────────────────────────────────────────────── */
+.grid-survey {
+  background-image:
+    radial-gradient(circle at 1px 1px, var(--grid-dot) 1px, transparent 1.2px),
+    linear-gradient(to right, var(--grid-dot) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-dot) 1px, transparent 1px);
+  background-size:
+    24px 24px,
+    120px 120px,
+    120px 120px;
+}
+
+/* Film grain over everything, never interactive */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+html.no-blur .grain {
+  display: none;
+}
+
+/* Corner registration ticks (8px brackets) */
+.ticks {
+  position: relative;
+}
+.ticks::before,
+.ticks::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+  border-color: var(--line-strong);
+}
+.ticks::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+.ticks::after {
+  right: -1px;
+  bottom: -1px;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+}
+
+/* Glass: frosted dark panels over the 3D film (rounded, hairline, inner highlight).
+   Tint is dark enough to keep text at 4.5:1 over the brightest scan frame.
+   Low-power devices (html.no-blur) get the same tint without the blur. */
+.glass {
+  background: rgba(14, 19, 17, 0.62);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(236, 234, 226, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 24px 60px -24px rgba(0, 0, 0, 0.6);
+}
+.glass-light {
+  background: rgba(236, 234, 226, 0.06);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(236, 234, 226, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+/* Glass over paper bands: light frost */
+.glass[data-theme="paper"],
+[data-theme="paper"] .glass:not([data-theme]) {
+  background: rgba(236, 233, 224, 0.72);
+  border-color: rgba(10, 14, 13, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 18px 40px -24px rgba(10, 14, 13, 0.35);
+}
+html.no-blur .glass,
+html.no-blur .glass-light {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: rgba(14, 19, 17, 0.9);
+}
+/* Phones and tablets: solid tinted glass from the first paint (blur over a
+   full-screen image is expensive to rasterise on mobile GPUs and CPUs) */
+@media (pointer: coarse) {
+  .glass,
+  .glass-light {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(14, 19, 17, 0.88);
+  }
+  .glass[data-theme="paper"],
+  [data-theme="paper"] .glass:not([data-theme]) {
+    background: rgba(236, 233, 224, 0.96);
+  }
+  .grain {
+    display: none;
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .glass-light {
+    background: rgba(14, 19, 17, 0.9);
+  }
+}
+
+/* Graded stock photography: survey evidence, not stock */
+.grade {
+  filter: grayscale(1) contrast(1.15) brightness(0.88);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+
+/* ── Film (homepage 3D story) ──────────────────────────────── */
+/* Static fallback renders inside each chapter: only without JS or with reduced motion */
+.film-static {
+  display: none;
+}
+html:not(.js) .film-stage {
+  display: none;
+}
+html:not(.js) .film-static {
+  display: block;
+}
+html:not(.js) .film-chapter {
+  min-height: 0 !important;
+  padding-block: 3rem;
+}
+html:not(.js) .film-flow {
+  margin-top: 0;
+  padding-top: 5rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .film-stage {
+    display: none;
+  }
+  .film-static {
+    display: block;
+  }
+  .film-chapter {
+    min-height: 0 !important;
+    padding-block: 3rem;
+  }
+  .film-flow {
+    margin-top: 0 !important;
+    padding-top: 5rem;
+  }
+}
+
+/* Explore button and crosshair only once the live 3D is running */
+.film-explore {
+  display: none;
+}
+html.film-live .film-explore {
+  display: inline-flex;
+}
+@media (pointer: fine) {
+  html.film-live #film {
+    cursor: crosshair;
+  }
+}
+
+/* Explore mode lifts the 3D stage above the page, header and dock */
+html.exploring .film-stage {
+  z-index: 90;
+}
+
+/* Kinetic headings: each word rises out of a mask, staggered */
+.kw {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.kw > span {
+  display: inline-block;
+}
+html.reveal-on [data-reveal="words"] {
+  opacity: 1;
+  transform: none;
+}
+html.reveal-on [data-reveal="words"] .kw > span {
+  transform: translateY(105%) rotate(4deg);
+  transform-origin: 0 100%;
+  transition: transform 0.9s var(--ease-expo);
+  transition-delay: calc(var(--w, 0) * 45ms);
+}
+html.reveal-on [data-reveal="words"][data-in] .kw > span {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.reveal-on [data-reveal="words"] .kw > span {
+    transform: none !important;
+  }
+}
+
+/* Giant scroll-linked type band */
+.band-track {
+  animation: band-x linear both;
+  animation-timeline: view();
+  animation-range: entry 0% exit 100%;
+}
+@keyframes band-x {
+  from {
+    transform: translateX(5%);
+  }
+  to {
+    transform: translateX(-45%);
+  }
+}
+@supports not (animation-timeline: view()) {
+  .band-track {
+    animation: band-fallback 60s linear infinite;
+  }
+  @keyframes band-fallback {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .band-track {
+    animation: none !important;
+  }
+}
+.outline-type {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(236, 234, 226, 0.28);
+}
+
+/* Poster frames crossfade between chapters (no wipe) */
+.poster {
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+.poster[data-on] {
+  opacity: 1;
+}
+.poster:first-child {
+  opacity: 1;
+}
+
+/* MapLibre controls, survey style */
+.maplibregl-popup-content {
+  background: #121816 !important;
+  color: #eceae2 !important;
+  border: 1px solid rgba(236, 234, 226, 0.14);
+  border-radius: 0 !important;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 10px 12px !important;
+}
+.maplibregl-popup-tip {
+  border-top-color: #121816 !important;
+  border-bottom-color: #121816 !important;
+}
+.maplibregl-popup-close-button {
+  color: #8e9791;
+  font-size: 16px;
+  padding: 0 6px;
+}
+.maplibregl-ctrl-attrib {
+  font-size: 10px;
+  background: rgba(10, 14, 13, 0.75) !important;
+  color: #8e9791 !important;
+}
+.maplibregl-ctrl-attrib a {
+  color: #8e9791 !important;
+}
+.maplibregl-ctrl-group {
+  background: #121816 !important;
+  border: 1px solid rgba(236, 234, 226, 0.14);
+  border-radius: 0 !important;
+}
+.maplibregl-ctrl-group button + button {
+  border-top-color: rgba(236, 234, 226, 0.14) !important;
+}
+.maplibregl-ctrl-icon {
+  filter: invert(0.9);
+}
+
+/* ── Reveals ─────────────────────────────────────────────────────
+   One-shot rise. <RevealObserver> adds `reveal-on` to <html> once JS
+   runs and sets data-in on each [data-reveal] element as it enters
+   the viewport. Without JS, or with reduced motion, content is simply
+   visible. Stagger siblings with style="--i: n". */
+html.reveal-on [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s var(--ease-expo),
+    transform 0.9s var(--ease-expo);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+html.reveal-on [data-reveal][data-in] {
+  opacity: 1;
+  transform: none;
+}
+/* Images wipe in like a scan pass */
+html.reveal-on [data-reveal="wipe"] {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0.9s var(--ease-expo);
+}
+html.reveal-on [data-reveal="wipe"][data-in] {
+  clip-path: inset(0 0 0 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html.reveal-on [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+  .animate-marquee {
+    animation: none !important;
+  }
+}
+
+/* ── Page transitions (React <ViewTransition>) ──────────────── */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(.page-exit) {
+  animation: 150ms ease-in both vt-out;
+}
+::view-transition-new(.page-enter) {
+  animation: 400ms var(--ease-expo) 90ms both vt-in;
+}
+@keyframes vt-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+::view-transition-group(site-header),
+::view-transition-group(contact-dock),
+::view-transition-group(contact-fab) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header),
+::view-transition-old(contact-dock),
+::view-transition-old(contact-fab) {
+  display: none;
+}
+::view-transition-new(site-header),
+::view-transition-new(contact-dock),
+::view-transition-new(contact-fab) {
+  animation: none;
+}
+::view-transition-group(.project-image) {
+  animation-duration: 450ms;
+  animation-timing-function: var(--ease-expo);
+  z-index: 50;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+.animate-fade-in {
+  animation: fade-in 0.35s var(--ease-expo) both;
+}
+
+/* FAQ: animate <details> open and close where supported */
+:root {
+  interpolate-size: allow-keywords;
+}
+details::details-content {
+  block-size: 0;
+  overflow: clip;
+  opacity: 0;
+  transition:
+    block-size 0.3s var(--ease-expo),
+    opacity 0.25s ease,
+    content-visibility 0.3s allow-discrete;
+}
+details[open]::details-content {
+  block-size: auto;
+  opacity: 1;
 }
