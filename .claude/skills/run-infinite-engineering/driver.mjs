@@ -53,7 +53,8 @@ if (!BROWSER) {
 /* ── Server ──────────────────────────────────────────────────── */
 const up = async () => {
   try {
-    await fetch(BASE, { signal: AbortSignal.timeout(2500) });
+    // A free port refuses instantly; a cold `next dev` can take 10 s+ to compile `/`.
+    await fetch(BASE, { signal: AbortSignal.timeout(30000) });
     return true;
   } catch {
     return false;
@@ -107,7 +108,11 @@ async function openBrowser() {
   page.on("pageerror", (e) => problems.push(`pageerror: ${e.message}`));
   page.on("console", (m) => {
     // "Failed to load resource" lines carry no URL; the response listener below reports those instead
-    if (m.type() === "error" && !m.text().startsWith("Failed to load resource")) problems.push(`console: ${m.text().slice(0, 300)}`);
+    if (m.type() === "error" && !m.text().startsWith("Failed to load resource")) {
+      // React's hydration warning puts the useful part (the +/- attribute diff) at the end.
+      const diff = m.text().split("\n").filter((l) => /^[+-]\s{3,}\S/.test(l)).slice(0, 12).join("\n");
+      problems.push(`console: ${m.text().slice(0, 200)}${diff ? `\n${diff}` : ""}`);
+    }
   });
   page.on("response", (r) => {
     // Vercel Analytics scripts only exist on Vercel; their local 404s are expected

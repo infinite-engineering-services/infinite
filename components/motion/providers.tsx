@@ -35,17 +35,36 @@ export function RevealObserver() {
         });
     };
 
-    scan();
-    document.documentElement.classList.add("reveal-on");
-
+    // This effect runs once the layout has hydrated, but page segments stream in
+    // and hydrate later. Writing data-in onto their elements before React has
+    // claimed them triggers hydration warnings, so wait for load and an idle
+    // moment (React keeps the main thread busy until hydration is done).
+    // Until then nothing is hidden, since reveal-on is not yet set.
     let frame = 0;
+    let idle = 0;
     const mo = new MutationObserver(() => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(scan);
     });
-    mo.observe(document.body, { childList: true, subtree: true });
+    const start = () => {
+      scan();
+      document.documentElement.classList.add("reveal-on");
+      mo.observe(document.body, { childList: true, subtree: true });
+    };
+    const afterLoad = () => {
+      // Safari has no requestIdleCallback
+      idle =
+        typeof window.requestIdleCallback === "function"
+          ? window.requestIdleCallback(start, { timeout: 1500 })
+          : window.setTimeout(start, 200);
+    };
+    if (document.readyState === "complete") afterLoad();
+    else window.addEventListener("load", afterLoad, { once: true });
 
     return () => {
+      window.removeEventListener("load", afterLoad);
+      if (typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(idle);
+      window.clearTimeout(idle);
       io.disconnect();
       mo.disconnect();
       cancelAnimationFrame(frame);

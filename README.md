@@ -1,4 +1,4 @@
-# Infinite Engineering Solutions Pvt. Ltd. website
+# Infinite Engineering Service and Technology Pvt. Ltd. website
 
 Marketing site for a laser scanning → CAD/BIM → GIS engineering company.
 Design: "Survey Noir". Dark by default (void `#0A0E0D`) with paper bands

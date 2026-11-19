@@ -3,7 +3,7 @@ name: run-infinite-engineering
 description: Build, run, and drive the Infinite Engineering website (Next.js 16). Use when asked to start or run the site, build it, test it, smoke-test the pages, take a screenshot of a page or section, check mobile layout, try the quote form or the map, or re-render the studio images.
 ---
 
-Marketing site for Infinite Engineering Solutions (Next.js 16 App Router, React 19, Tailwind v4, shadcn/ui + Magic UI components, MapLibre map). Drive it with `.claude/skills/run-infinite-engineering/driver.mjs`: it starts the server if none is running, opens headless Edge/Chrome through `puppeteer-core`, runs your commands, saves screenshots, and stops the server it started.
+Marketing site for Infinite Engineering Service and Technology Pvt. Ltd. (Next.js 16 App Router, React 19, Tailwind v4, shadcn/ui, a three.js/R3F scroll film, MapLibre map). Drive it with `.claude/skills/run-infinite-engineering/driver.mjs`: it starts the server if none is running, opens headless Edge/Chrome through `puppeteer-core`, runs your commands, saves screenshots, and stops the server it started.
 
 All paths are relative to the unit root: the folder that holds `package.json` (`infinite-engineering/`).
 
@@ -27,7 +27,7 @@ No env vars are needed to run. The quote form only sends email when `RESEND_API_
 npm run build
 ```
 
-Stop any running server first (see Gotchas). The build copies the MapLibre worker into `public/vendor/` in its `prebuild` hook and prerenders 27 static pages.
+Stop any running `next start` first (see Gotchas); a running `next dev` is fine, it builds into `.next/dev`. The build takes about 30 s, copies the MapLibre worker into `public/vendor/` in its `prebuild` hook and prerenders 28 static pages.
 
 ## Run (agent path)
 
@@ -47,22 +47,35 @@ Scripted session: pipe commands on stdin, one per line.
 
 ```bash
 node .claude/skills/run-infinite-engineering/driver.mjs <<'EOF'
+viewport desktop
 nav /
 scroll #proof
+eval getComputedStyle(document.querySelector('.band-track')).animationName
 click text=Live map
 wait-for .maplibregl-canvas
 wait 4000
-click text=Leak hotspots
-wait 1500
-screenshot map-hotspots
+screenshot map-tab
 motion reduce
 nav /
-eval getComputedStyle(document.querySelector('.animate-marquee')).animationName
+eval [getComputedStyle(document.querySelector('.band-track')).animationName, getComputedStyle(document.querySelector('.film-stage')).display]
+screenshot reduced-home
+motion normal
 viewport mobile
 nav /contact
 wait-for form button[type=submit]
-fill "form input[type=email]" someone@example.com
 overflow
+console
+EOF
+```
+
+The scroll band prints `"band-x"` normally and `["none","none"]` under reduced motion (band static, 3D stage hidden, one still render per chapter instead).
+
+To drive a server someone else already runs (for example the user's `npm run dev` on :3000), attach instead of starting one. Never stop that server:
+
+```bash
+node .claude/skills/run-infinite-engineering/driver.mjs --no-serve --port 3000 <<'EOF'
+nav /about
+text h1
 console
 EOF
 ```
@@ -113,6 +126,29 @@ EOF
 
 `window.__filmPoints` is the point count from the worker (181,082 at mid tier); `window.__frames` counts rendered frames. Software WebGL manages only a few frames per second, so give each scroll position 6–9 s before the screenshot.
 
+Explore mode (full-screen orbit view with Scan / Model / Plan and six hotspots) opens from the hero button and closes on Esc; while open, `<html>` has the class `exploring`:
+
+```bash
+node .claude/skills/run-infinite-engineering/driver.mjs <<'EOF'
+viewport desktop
+nav /?webgl
+wait 8000
+click text=Explore the station in 3D
+wait 4000
+eval [document.documentElement.classList.contains('exploring'), document.querySelectorAll('[aria-label$=": details"]').length]
+click text=Model
+wait 5000
+click [aria-label$=": details"]
+wait 1500
+screenshot explore-model
+press Escape
+wait 800
+eval document.documentElement.classList.contains('exploring')
+EOF
+```
+
+Expect `[true,6]`, then `false` after Esc; the screenshot shows the Revit-style model with the "Pipe rack" card.
+
 ### Render studio (dev only)
 
 `/studio?scene=<name>` renders one scene full-screen and sets `document.title` to `ready`. It returns 404 in production, so use `--dev`:
@@ -157,7 +193,7 @@ npm run lint
 npm run typecheck
 ```
 
-Both print nothing when they pass. `node scripts/check-placeholders.mjs` lists sample content that still needs real data (23 markers at the time of writing; that is expected, not a failure).
+Both print nothing when they pass. `node scripts/check-placeholders.mjs` lists sample content that still needs real data (16 markers on 2026-11-20: domain, CIN, GSTIN, LinkedIn, WhatsApp, two sample projects, the founder story; expected until the owner supplies them, not a failure).
 
 ## Lighthouse
 
@@ -181,7 +217,7 @@ Add `--preset=desktop` for desktop. Measured 2026-11-18: accessibility, best pra
 - **`ERROR: The process with PID … could not be terminated`** lines appear when puppeteer closes Edge on Windows. They are harmless.
 - **`/_vercel/insights/script.js` and `/_vercel/speed-insights/script.js` return 404 locally.** They only exist on Vercel. The driver ignores them.
 - **WebGL needs software rendering in headless mode.** The driver passes `--use-angle=swiftshader --enable-unsafe-swiftshader`. Without them the map canvas (and the 3D studio scenes) stay blank.
-- **The 3D hero only mounts at ≥1024 px wide, after browser idle.** At mobile widths you get the static poster by design. Give desktop screenshots about 2.5 s after load.
+- **Who gets real 3D is decided in `components/three/film/tier.ts`, after load + idle.** Reduced motion, Save-Data, slower than 4g or no WebGL2 → posters. Touch devices get the light `low` tier only with ≥4 GB memory and ≥6 cores, else posters. The canvas also falls back to posters on a software renderer unless the URL has `?webgl`. So a plain headless screenshot shows posters, which is correct.
 - **The map and the homepage form are lazy.** MapLibre loads only when the `Live map` tab is opened; the homepage form loads when it nears the viewport (on `/contact` it renders immediately). `wait-for .maplibregl-canvas` and `wait-for form button[type=submit]` before interacting.
 - **Measuring JS: links to `/contact` prefetch its form chunk (~50 KB, zod + the form) in the background.** When you sum `performance` script entries on `/`, subtract chunks not referenced in `.next/server/app/index.html`, or you will over-count the homepage's own JS (187 KB on 2026-11-18).
 - **A valid form submit in production without an email key shows "Our form is temporarily unavailable…".** That is the intended fallback, and it proves the server action ran. In dev it logs the request to the server log, shows the success state and the step-2 details form. Running `form --dev` while someone else's `next dev` is up fails with "Another next dev server is already running"; use `form --no-serve --port 3000` against theirs instead.
@@ -191,6 +227,7 @@ Add `--preset=desktop` for desktop. Measured 2026-11-18: accessibility, best pra
 - **The form drops anything submitted within 3 seconds of mounting** (spam time-trap) and silently "accepts" it. Wait 3.2 s before submitting, as `driver.mjs form` does.
 - **Do not use Edge's own `--headless --screenshot --window-size=390,…` for mobile shots.** The window cannot go below about 500 px, so the page looks cut off on the right. The driver's `viewport mobile` emulates the width properly.
 - **A headless screenshot of the 2D-canvas `facade` studio scene can come out blank** under the swiftshader flags. `scripts/capture-studio.mjs` reads that canvas with `toDataURL` instead.
+- **`text h1` prints headings twice** ("…one team.…one team."). Kinetic headings render an `sr-only` copy plus the split, animated words. That is intended.
 - **This is Next.js 16 with Cache Components.** `export const dynamicParams` is a build error, and `next/dynamic` with `ssr: false` must live in a client component. Read `node_modules/next/dist/docs/` before changing routing or caching code.
 
 ## Troubleshooting
@@ -200,5 +237,6 @@ Add `--preset=desktop` for desktop. Measured 2026-11-18: accessibility, best pra
 - **`Type '"/services/[slug]"' does not satisfy the constraint '"/"'` from `tsc`**: route types are stale after adding a route. Run `npx next typegen`, then `npm run typecheck`.
 - **Map area is blank and the console says `Worker failed to load`**: `public/vendor/maplibre-gl-worker.mjs` is missing. Run `node scripts/copy-maplibre-worker.mjs` (the `predev`/`prebuild` hooks and `driver.mjs --dev` do this for you).
 - **`Error: listen EADDRINUSE: address already in use :::3200`**: an earlier `next dev` is still running. Killing only its parent process leaves a child holding the port on Windows. Free the port with the PowerShell command under Gotchas (the driver avoids this by killing the whole process tree with `taskkill /T`).
+- **`Nothing is listening on http://localhost:3000 and --no-serve was given` although the dev server is up**: older copies of the driver gave the probe 2.5 s, and a cold `next dev` takes longer to compile `/`. The probe now waits 30 s (a free port still fails instantly).
 - **`driver error: No production build found`**: run `npm run build`, or pass `--dev`.
 - **`ConnectionClosedError: Connection closed` in the capture script**: headless Edge ran out of memory after several WebGL scenes in one browser. The script now launches a fresh browser per scene; re-run only the scenes that failed.
