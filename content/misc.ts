@@ -45,11 +45,63 @@ export const industries: Industry[] = [
     photo: "scanner",
   },
   {
+    slug: "telecom-utilities",
+    name: "Telecom & Utilities",
+    icon: "tower",
+    pitch: "Fibre, wireless, water and power networks designed, drafted and mapped to operator standards.",
+    points: [
+      "FTTx and HFC design with construction packages",
+      "Pole loading, small cell and tower documents",
+      "Water, power and sewer networks in GIS",
+    ],
+    services: ["telecom-network-design", "utility-gis-mapping", "lidar-data-analysis"],
+    photo: "city-delhi",
+  },
+  {
+    slug: "oil-gas-mining",
+    name: "Oil, Gas & Mining",
+    icon: "pickaxe",
+    pitch: "Plant, pipeline and site data you can engineer from, from as-built models to terrain and volumes.",
+    points: [
+      "Plant and pipe-rack as-built models",
+      "Stockpile and pit volumes from LiDAR and drone surveys",
+      "Cyclone separator and dust-control studies",
+    ],
+    services: ["as-built-modelling", "lidar-data-analysis", "cyclone-separator-modelling"],
+    photo: "plant",
+  },
+  {
+    slug: "manufacturing",
+    name: "Manufacturing & Industrial",
+    icon: "factory",
+    pitch: "Parts, structures and process equipment modelled for fabrication, retrofit and simulation.",
+    points: [
+      "3D CAD and reverse engineering of parts",
+      "Structural steel shop and erection drawings",
+      "Factory layouts from laser scans",
+    ],
+    services: ["3d-cad-modelling", "structural-steel-detailing", "laser-scanning-point-cloud"],
+    photo: "scanner",
+  },
+  {
+    slug: "enterprise",
+    name: "Enterprise & Public Sector",
+    icon: "landmark",
+    pitch: "Software, data and security for healthcare, finance, retail and government teams.",
+    points: [
+      "Web portals, mobile apps and SAP programmes",
+      "Analytics, AI and clinical SAS programming",
+      "Cloud migration and cyber security",
+    ],
+    services: ["website-development", "data-science-ai-ml", "cyber-security"],
+    photo: "design-team",
+  },
+  {
     slug: "international",
     name: "International Outsourcing",
     icon: "globe",
-    pitch: "Teams in the US, UK and Middle East send files at close of business and receive deliverables the next morning.",
-    points: ["IST overnight delivery cycle", "Your templates and standards", "NDA and secure transfer"],
+    pitch: "Teams in the US, UK and Middle East work with us across time zones: our IST working day overlaps UK mornings and runs while US teams are offline.",
+    points: ["Time-zone advantage for US and UK teams", "Your templates and standards", "NDA and secure transfer"],
     services: ["cad-drafting", "scan-to-bim", "gis-mapping-analysis"],
     photo: "design-team",
   },
@@ -82,6 +134,10 @@ export const testimonials: Testimonial[] = [
 
 export const faqs: Faq[] = [
   {
+    q: "Do you also deliver software and IT projects?",
+    a: "Yes. Alongside our engineering work we build websites, mobile apps and IoT systems, and deliver data science, SAS, SAP, cloud, cyber security, software testing and digital marketing. Many clients use both, for example a GIS dataset served through a custom web portal.",
+  },
+  {
     q: "Which file formats do you accept?",
     a: "Point clouds in E57, RCP/RCS, LAS/LAZ, PTX and native Leica, Faro or Trimble projects. CAD/BIM in DWG, DXF, RVT, IFC and NWD. GIS in SHP, File GDB, GeoPackage, GeoJSON, KML and CSV. We also convert scanned PDFs and paper drawings.",
   },
@@ -103,7 +159,7 @@ export const faqs: Faq[] = [
   },
   {
     q: "Do you work with international clients?",
-    a: "Yes. We work with teams in the USA, UK, Middle East and Australia. Our IST working hours give US and UK clients an overnight delivery cycle.",
+    a: "Yes. We work with teams in the USA, UK, Middle East and Australia. Our IST working day overlaps UK mornings and runs while US teams are offline, so work moves forward outside your hours. Delivery dates are agreed per project.",
   },
   {
     q: "Do you provide on-site laser scanning?",

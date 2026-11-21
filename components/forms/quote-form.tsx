@@ -39,11 +39,38 @@ function Err({ id, msg }: { id: string; msg?: string }) {
 
 type FormIn = z.input<typeof quoteSchema>;
 
+type Lead = Pick<QuoteInput, "name" | "email" | "services" | "message">;
+
+/** A ready-to-send WhatsApp message with everything the visitor entered. */
+function leadMessage(lead: Partial<Lead>, refId?: string, extra?: Partial<QuoteDetails>) {
+  const clip = (t: string, n: number) => (t.length > n ? `${t.slice(0, n - 1)}…` : t);
+  const lines = [
+    refId
+      ? `Hi ${site.name}, I've just sent a project request on your website.`
+      : `Hi ${site.name}, I'd like to discuss a project.`,
+    "",
+    refId ? `Reference: ${refId}` : "",
+    lead.name ? `Name: ${lead.name}` : "",
+    lead.email ? `Email: ${lead.email}` : "",
+    lead.services?.length ? `Services: ${lead.services.join(", ")}` : "",
+    lead.message ? `Project: ${clip(lead.message.trim(), 600)}` : "",
+    extra?.company ? `Company: ${extra.company}` : "",
+    extra?.phone ? `Phone: ${extra.phone}` : "",
+    extra?.fileType ? `Input files: ${extra.fileType}` : "",
+    extra?.projectSize ? `Project size: ${extra.projectSize}` : "",
+    extra?.deadline ? `Deadline: ${extra.deadline}` : "",
+    extra?.budget ? `Budget: ${extra.budget}` : "",
+    extra?.fileLink ? `Files: ${extra.fileLink}` : "",
+  ];
+  return lines.filter((l, i) => l !== "" || i === 1).join("\n");
+}
+
 /** Two steps: a four-field lead first, optional scoping details after. */
 export function QuoteForm() {
   const uid = useId();
   const [pending, startTransition] = useTransition();
   const [ref, setRef] = useState<string | null>(null);
+  const [lead, setLead] = useState<Lead | null>(null);
   const [error, setErrorMsg] = useState<string | null>(null);
 
   const {
@@ -52,6 +79,7 @@ export function QuoteForm() {
     setValue,
     setError,
     setFocus,
+    getValues,
     control,
     formState: { errors },
   } = useForm<FormIn, unknown, QuoteInput>({
@@ -78,6 +106,7 @@ export function QuoteForm() {
       const res = await submitQuote(data);
       if (res.ok) {
         track("quote_submit", { services: data.services.join("|") });
+        setLead({ name: data.name, email: data.email, services: data.services, message: data.message });
         setRef(res.ref);
       } else {
         if (res.fieldErrors) {
@@ -95,7 +124,7 @@ export function QuoteForm() {
     if (first === "services") document.getElementById(`${uid}-services`)?.focus();
   };
 
-  if (ref) return <Details refId={ref} />;
+  if (ref) return <Details refId={ref} lead={lead} />;
 
   const e = errors;
   const a = (k: keyof FormIn) => ({
@@ -189,8 +218,12 @@ export function QuoteForm() {
             {...a("consent")}
           />
           <span>
-            {site.legalName} may use these details to reply to this enquiry
-            (India&apos;s DPDP Act 2023). We never share them.
+            {site.legalName} may use these details to reply to this enquiry, as
+            described in our{" "}
+            <a href="/privacy" target="_blank" className="underline underline-offset-2 hover:text-ink">
+              Privacy Policy
+            </a>
+            . We never sell or share them for marketing.
           </span>
         </label>
         <Err id={`${uid}-consent-err`} msg={e.consent?.message} />
@@ -199,8 +232,14 @@ export function QuoteForm() {
       {error ? (
         <p role="alert" className="rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-[14px]">
           {error}{" "}
-          <a href={whatsappLink()} className="font-medium underline underline-offset-2" target="_blank" rel="noopener noreferrer">
-            WhatsApp us
+          <a
+            href={whatsappLink(leadMessage(getValues() as Partial<Lead>))}
+            onClick={() => track("whatsapp_click", { from: "quote_error" })}
+            className="font-medium underline underline-offset-2"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Send these details on WhatsApp
           </a>
         </p>
       ) : null}
@@ -213,7 +252,7 @@ export function QuoteForm() {
             </>
           ) : (
             <>
-              Send request <ArrowRight />
+              Send project details <ArrowRight />
             </>
           )}
         </Button>
@@ -228,10 +267,11 @@ export function QuoteForm() {
 /* ── Step 2 ──────────────────────────────────────────────────── */
 type DetailsIn = z.input<typeof quoteDetailsSchema>;
 
-function Details({ refId }: { refId: string }) {
+function Details({ refId, lead }: { refId: string; lead: Lead | null }) {
   const uid = useId();
   const [pending, startTransition] = useTransition();
   const [done, setDone] = useState(false);
+  const [extra, setExtra] = useState<Partial<QuoteDetails> | undefined>();
   const [error, setErrorMsg] = useState<string | null>(null);
   const [currency, setCurrency] = useState<"INR" | "USD">("INR");
   const {
@@ -249,7 +289,10 @@ function Details({ refId }: { refId: string }) {
     setErrorMsg(null);
     startTransition(async () => {
       const res = await addQuoteDetails(data);
-      if (res.ok) setDone(true);
+      if (res.ok) {
+        setExtra(data);
+        setDone(true);
+      }
       else {
         if (res.fieldErrors)
           for (const [k, v] of Object.entries(res.fieldErrors))
@@ -267,15 +310,17 @@ function Details({ refId }: { refId: string }) {
           <h3 className="font-display text-2xl font-medium">Request received.</h3>
           <p className="mt-1.5 text-[15px] leading-6 text-muted-foreground">
             Your reference is <span className="font-mono text-foreground">{refId}</span>.{" "}
-            {promises.reply} For a faster answer, continue on WhatsApp.
+            {promises.reply} For a faster answer, send the same details to an engineer on
+            WhatsApp: the message is already written, just press send.
           </p>
-          <Button asChild variant="outline" className="mt-4">
+          <Button asChild className="mt-4 bg-[#25d366] text-[#06140b] hover:bg-[#3ee07a]">
             <a
-              href={whatsappLink(`Hi ${site.name}, following up on my request ${refId}.`)}
+              href={whatsappLink(leadMessage(lead ?? {}, refId, extra))}
+              onClick={() => track("whatsapp_click", { from: "quote_success" })}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <WhatsAppIcon className="size-4 text-[#25d366]" /> Continue on WhatsApp
+              <WhatsAppIcon className="size-4" /> Send these details on WhatsApp
             </a>
           </Button>
         </div>
@@ -284,7 +329,8 @@ function Details({ refId }: { refId: string }) {
       {done ? (
         <p className="rounded-xl border bg-ink/[0.04] p-4 text-[15px]">
           <Check className="mr-1.5 inline size-4 text-[#25d366]" aria-hidden />
-          Details added to {refId}. Thank you, that helps us scope faster.
+          Details added to {refId}. Thank you, that helps us scope faster. The WhatsApp
+          message above now includes them too.
         </p>
       ) : (
         <form onSubmit={handleSubmit(onValid)} noValidate className="grid gap-5 rounded-2xl border bg-ink/[0.03] p-5 sm:p-6">

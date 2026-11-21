@@ -10,7 +10,7 @@ export const site = {
   legalName: "Infinite Engineering Service and Technology Pvt. Ltd.",
   tagline: "Scan. Model. Map.",
   description:
-    "Laser scanning, Scan-to-BIM, CAD drafting and GIS mapping from one team on one coordinate system. Specialists in gas pipeline and CGD utility GIS for clients across India and worldwide.",
+    "Engineering and technology services from one team: laser scanning, CAD, Scan-to-BIM, steel detailing and GIS, plus web, mobile, AI, cloud and security. Specialists in pipeline and utility GIS.",
 
   // PLACEHOLDER: production domain
   url: "https://www.infinite-engineering.in",
@@ -32,10 +32,6 @@ export const site = {
   },
   geo: { lat: 17.6868, lng: 83.2105 }, // Gajuwaka, Visakhapatnam (approximate)
 
-  // PLACEHOLDER: statutory identifiers (shown in the footer title block)
-  cin: "U00000AP0000PTC000000",
-  gstin: "37AAAAA0000A1Z5",
-
   hours: "Mon–Sat, 09:30–19:00 IST",
   copyrightYear: 2026,
 
@@ -51,8 +47,6 @@ export const site = {
 export const sitePlaceholders = [
   "url",
   "whatsapp (assumed same as phone)",
-  "cin",
-  "gstin",
   "socials.linkedin",
 ];
 
@@ -94,7 +88,7 @@ export const promises = {
 };
 
 export const cta = {
-  primary: "Request a quote",
+  primary: "Start your project",
   secondary: "WhatsApp an engineer",
   href: "/contact#quote",
 };

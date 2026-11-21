@@ -63,8 +63,6 @@ export default function AboutPage() {
               <dl className="mt-4 divide-y text-[15px]">
                 {[
                   ["Legal name", site.legalName],
-                  ["CIN", site.cin],
-                  ["GSTIN", site.gstin],
                   ["Office", `${site.address.city}, ${site.address.region}, India`],
                   ["Hours", site.hours],
                 ].map(([k, v]) => (

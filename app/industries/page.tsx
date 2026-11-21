@@ -16,9 +16,9 @@ import { getService } from "@/content/services";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Industries: Gas Utilities, AEC, Smart Cities & Survey Firms",
+  title: "Industries: Gas, Telecom, AEC, Manufacturing, Mining & Enterprise",
   description:
-    "Laser scanning, BIM and GIS for city gas distribution operators, architects and builders, smart cities, survey firms and international outsourcing clients.",
+    "Engineering and technology services for gas and telecom utilities, architects and builders, manufacturing, oil, gas and mining, smart cities, survey firms and enterprise teams.",
   alternates: { canonical: "/industries" },
 };
 

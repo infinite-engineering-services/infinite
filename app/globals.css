@@ -27,6 +27,7 @@
   --color-scan: #ff5a36;
   --color-model: #3ecfd2;
   --color-map: #f4c430;
+  --color-build: #b39cff;
   --color-void: #0a0e0d;
   --color-bone: #ece9e0;
   --color-canvas: var(--surface);
@@ -271,6 +272,12 @@ html.no-blur .glass-light {
   backdrop-filter: none;
   background: rgba(14, 19, 17, 0.9);
 }
+html.no-blur header .glass {
+  background: rgba(12, 17, 15, 0.97);
+}
+html.no-blur header .glass[data-theme="paper"] {
+  background: rgba(236, 233, 224, 0.98);
+}
 /* Phones and tablets: solid tinted glass from the first paint (blur over a
    full-screen image is expensive to rasterise on mobile GPUs and CPUs) */
 @media (pointer: coarse) {
@@ -283,6 +290,13 @@ html.no-blur .glass-light {
   .glass[data-theme="paper"],
   [data-theme="paper"] .glass:not([data-theme]) {
     background: rgba(236, 233, 224, 0.96);
+  }
+  /* The sticky header carries text over moving content: keep it solid */
+  header .glass {
+    background: rgba(12, 17, 15, 0.97);
+  }
+  header .glass[data-theme="paper"] {
+    background: rgba(236, 233, 224, 0.98);
   }
   .grain {
     display: none;
@@ -606,4 +620,43 @@ details::details-content {
 details[open]::details-content {
   block-size: auto;
   opacity: 1;
+}
+
+/* ── Service line art (components/brand/service-art.tsx) ───────
+   Strokes marked .d draw on when the art mounts (pathLength=1), in
+   order of --d. Inside a [data-reveal] block they wait until it is in
+   view. Nodes marked .p breathe slowly. Static under reduced motion. */
+.art .d {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: art-draw 1.5s cubic-bezier(0.2, 0.7, 0.1, 1) both;
+  animation-delay: calc(var(--d, 0) * 90ms);
+}
+.art .f {
+  animation: art-fade 0.9s ease both;
+  animation-delay: calc(var(--d, 0) * 90ms + 300ms);
+}
+.art .p {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: art-pulse 2.8s ease-in-out infinite;
+  animation-delay: calc(var(--d, 0) * 220ms);
+}
+html.reveal-on [data-reveal]:not([data-in]) .art :is(.d, .f) {
+  animation-play-state: paused;
+}
+@keyframes art-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes art-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes art-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .art :is(.d, .f, .p) { animation: none; }
 }

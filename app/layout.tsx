@@ -47,6 +47,13 @@ export const metadata: Metadata = {
     "AutoCAD drafting outsourcing India",
     "BIM to GIS conversion",
     "laser scanning services Visakhapatnam",
+    "structural steel detailing services India",
+    "photogrammetry and LiDAR processing",
+    "utility GIS mapping",
+    "FTTx telecom design outsourcing",
+    "website and app development Visakhapatnam",
+    "SAP and cloud services India",
+    "cyber security services India",
   ],
   authors: [{ name: site.legalName }],
   openGraph: {

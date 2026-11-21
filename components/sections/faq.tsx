@@ -7,7 +7,7 @@ import { faqs } from "@/content/misc";
 import type { Faq as FaqItem } from "@/lib/types";
 
 /** The four questions the homepage answers (pilot, data and pricing have their own band). */
-export const homeFaqs = [0, 1, 6, 5].map((i) => faqs[i]);
+export const homeFaqs = [1, 2, 0, 7].map((i) => faqs[i]);
 
 /**
  * Two-column FAQ with native <details name> so only one answer is open and

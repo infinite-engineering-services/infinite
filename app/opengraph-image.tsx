@@ -1,4 +1,6 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { site } from "@/config/site";
 
 export const alt = `${site.name}: Scan. Model. Map.`;
@@ -6,6 +8,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function OgImage() {
+  const logo = `data:image/png;base64,${(await readFile(join(process.cwd(), "public/brand/infinite-logo-dark.png"))).toString("base64")}`;
   const bars = [
     ["#FF5A3C", "SCAN"],
     ["#5CC8D7", "MODEL"],
@@ -31,26 +34,17 @@ export default async function OgImage() {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 16,
-          fontSize: 26,
-          letterSpacing: 6,
+          gap: 22,
         }}
       >
-        <div
-          style={{
-            width: 22,
-            height: 22,
-            borderRadius: 22,
-            border: "3px solid #F2C230",
-          }}
-        />
-        INFINITE ENGINEERING
+        {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse renders plain img */}
+        <img src={logo} alt="" width={262} height={124} />
       </div>
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          fontSize: 108,
+          fontSize: 90,
           fontWeight: 800,
           lineHeight: 1,
         }}

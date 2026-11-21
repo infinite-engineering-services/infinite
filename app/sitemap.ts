@@ -5,7 +5,7 @@ import { projects } from "@/content/projects";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = site.url;
-  const pages = ["", "/services", "/work", "/industries", "/about", "/contact"].map((p) => ({
+  const pages = ["", "/services", "/work", "/industries", "/about", "/contact", "/privacy"].map((p) => ({
     url: `${base}${p}`,
     changeFrequency: "monthly" as const,
     priority: p === "" ? 1 : 0.8,

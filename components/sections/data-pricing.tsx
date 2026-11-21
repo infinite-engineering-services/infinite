@@ -84,7 +84,7 @@ export function DataPricing({ withPilot = true }: { withPilot?: boolean }) {
             ))}
           </ul>
           <p className="text-sm text-fog sm:max-w-[250px]">
-            Send files at the end of your day; review progress in your morning.
+            Our working day overlaps UK mornings and runs while US teams are offline.
           </p>
         </div>
       </Container>

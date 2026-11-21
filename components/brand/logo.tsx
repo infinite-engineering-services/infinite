@@ -1,60 +1,66 @@
+/* eslint-disable @next/next/no-img-element -- small pre-sized brand files, no optimiser needed */
 import { cn } from "@/lib/utils";
 
-/** The company's own mark (from the letterhead): the "i" with an infinity ribbon. */
-export function LogoMark({ className }: { className?: string }) {
+/*
+ * The company logo (supplied artwork): a flat blue infinity ribbon around a
+ * tower, "INFINITE", and "Design • Model • Build Beyond". The dark-background
+ * files lift the navy parts so they stay visible on the site's black.
+ * Files in public/brand/:
+ *   infinite-logo-color.png  original, for light backgrounds
+ *   infinite-logo-dark.png   same artwork with light lettering, for dark backgrounds
+ *   infinite-emblem(-color).webp, infinite-word(-color).webp  header pieces
+ *   infinite-logo.png        square icon (dark tile)
+ */
+
+/** The emblem alone: infinity ribbon, tower and frame. */
+export function LogoMark({ className, onLight = false }: { className?: string; onLight?: boolean }) {
   return (
-    // eslint-disable-next-line @next/next/no-img-element
     <img
-      src="/brand/infinite-mark.png"
+      src={onLight ? "/brand/infinite-emblem-color.webp" : "/brand/infinite-emblem.webp"}
       alt=""
-      width={162}
-      height={112}
-      className={cn("h-8 w-auto", className)}
+      width={285}
+      height={132}
+      className={cn("h-10 w-auto", className)}
     />
   );
 }
 
-/** Previous drawn mark, kept for reference. */
-export function DatumMark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 40 40" aria-hidden className={cn("size-9", className)}>
-      <circle
-        cx="20"
-        cy="20"
-        r="15"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M20 1v8M20 31v8M1 20h8M31 20h8"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M20 20c-2.2-2.6-3.9-3.9-5.6-3.9a3.9 3.9 0 0 0 0 7.8c1.7 0 3.4-1.3 5.6-3.9s3.9-3.9 5.6-3.9a3.9 3.9 0 0 1 0 7.8c-1.7 0-3.4-1.3-5.6-3.9Z"
-        fill="none"
-        stroke="#E8590C"
-        strokeWidth="2.2"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
+/** Header lockup: emblem + INFINITE. */
 export function Logo({ className }: { className?: string }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <LogoMark className="h-8" />
-      <span className="flex flex-col leading-none">
-        <span className="font-display text-[17px] font-bold tracking-[-0.01em]">
-          Infinite
-        </span>{" "}
-        <span className="mt-0.5 text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
-          Engineering
-        </span>
-      </span>
+      <LogoMark className="h-9 paper:hidden lg:h-10" />
+      <LogoMark onLight className="hidden h-9 paper:block lg:h-10" />
+      {/* light lettering on dark bars; the original navy lettering on paper bars */}
+      <img
+        src="/brand/infinite-word.webp"
+        alt=""
+        width={478}
+        height={54}
+        className="h-[14px] w-auto paper:hidden lg:h-[15px]"
+      />
+      <img
+        src="/brand/infinite-word-color.webp"
+        alt=""
+        width={478}
+        height={54}
+        className="hidden h-[14px] w-auto paper:block lg:h-[15px]"
+      />
+      <span className="sr-only">Infinite Engineering Service and Technology</span>
     </span>
+  );
+}
+
+/** Full stacked logo with tagline, for dark backgrounds. */
+export function LogoFull({ className }: { className?: string }) {
+  return (
+    <img
+      src="/brand/infinite-logo-dark.webp"
+      alt="Infinite: Design, Model, Build Beyond"
+      width={640}
+      height={303}
+      className={cn("h-auto w-60", className)}
+    />
   );
 }
 

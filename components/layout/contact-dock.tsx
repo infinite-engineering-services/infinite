@@ -58,7 +58,7 @@ export function ContactDock() {
             onClick={() => track("quote_cta_click", { from: "dock" })}
             className={`${item} bg-primary font-semibold text-primary-foreground`}
           >
-            <FileText className="size-[18px]" aria-hidden /> Quote
+            <FileText className="size-[18px]" aria-hidden /> Start
           </Link>
         )}
       </div>

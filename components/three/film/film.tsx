@@ -59,7 +59,8 @@ export function Film() {
           <div className="glass mt-7 max-w-3xl rounded-2xl p-5 sm:p-6">
             <p className="hidden text-[17px] leading-7 text-ink/80 sm:block">
               Laser scanning, Scan-to-BIM, CAD drafting and GIS from one team in Visakhapatnam. Built to
-              your templates and LOD, under NDA, with overnight delivery for US and UK teams.
+              your templates and LOD, under NDA, with working hours that overlap UK mornings and run
+              while US teams are offline.
             </p>
             <div className="flex flex-col gap-3 sm:mt-5 sm:flex-row">
               <Button asChild size="lg">

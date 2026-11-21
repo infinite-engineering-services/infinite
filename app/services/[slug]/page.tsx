@@ -8,20 +8,22 @@ import {
   Container,
   Icon,
   Photo,
-  Render,
   Section,
   SectionHeading,
+  stageDot,
   stagger,
 } from "@/components/brand/primitives";
 import { WhatsAppIcon } from "@/components/brand/logo";
+import { ServiceVisual } from "@/components/brand/service-art";
 import { PageHero } from "@/components/sections/page-hero";
 import { ProjectCard } from "@/components/sections/project-card";
 import { PilotCTA } from "@/components/sections/pilot-cta";
 import { Button } from "@/components/ui/button";
 import { JsonLd, breadcrumbLd } from "@/components/seo/json-ld";
-import { getService, services } from "@/content/services";
+import { getService, groupMeta, services } from "@/content/services";
 import { projects } from "@/content/projects";
 import { capabilityPdf, cta, pilot, site, whatsappLink } from "@/config/site";
+import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -49,7 +51,13 @@ export default async function ServicePage({
   if (!s) notFound();
 
   const related = projects.filter((p) => p.services.includes(s.slug)).slice(0, 3);
-  const others = services.filter((o) => o.slug !== s.slug);
+  const siblings = services.filter((o) => o.category === s.category && o.slug !== s.slug);
+  const group = groupMeta[s.group];
+  const facts: [string, string][] = s.facts ?? [
+    ["Accuracy", s.accuracy],
+    ["Turnaround", s.turnaround],
+    ["Delivered in", s.software.slice(0, 2).join(" · ")],
+  ];
   const isCgd = s.slug === "gas-pipeline-cgd-gis";
 
   return (
@@ -59,11 +67,20 @@ export default async function ServicePage({
           eyebrow="Service"
           crumbs={[
             { name: "Services", href: "/services" },
-            { name: s.title.split(" & ")[0] },
+            { name: group.label, href: `/services#${s.group}` },
+            { name: s.label },
           ]}
           title={s.title}
           intro={s.summary}
-          media={<Photo name={s.photo} eager sizes="(min-width: 1024px) 45vw, 100vw" />}
+          media={
+            s.photo ? (
+              <Photo name={s.photo} eager sizes="(min-width: 1024px) 45vw, 100vw" />
+            ) : (
+              <div className="aspect-[16/9] overflow-hidden">
+                <ServiceVisual s={s} eager />
+              </div>
+            )
+          }
         >
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg">
@@ -94,11 +111,7 @@ export default async function ServicePage({
         <section aria-label="Key facts" className="border-b">
           <Container>
             <dl className="grid divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-              {[
-                ["Accuracy", s.accuracy],
-                ["Turnaround", s.turnaround],
-                ["Delivered in", s.software.slice(0, 2).join(" · ")],
-              ].map(([k, v]) => (
+              {facts.map(([k, v]) => (
                 <div key={k} className="py-6 sm:px-6 sm:first:pl-0">
                   <dt className="text-sm text-muted-foreground">
                     {k}
@@ -129,17 +142,18 @@ export default async function ServicePage({
                   </li>
                 ))}
               </ul>
-              <div className="mt-8 overflow-hidden rounded-xl border bg-[#0a0e0d] shadow-card">
-                {s.media.svg ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={s.media.src} alt={s.media.alt} loading="lazy" className="aspect-[16/9] w-full object-cover object-top" />
-                ) : (
-                  <Render name={s.media.src} alt={s.media.alt} className="aspect-[16/9]" sizes="(min-width: 1024px) 55vw, 100vw" />
-                )}
-              </div>
-              <p className="mt-2 text-[13px] text-muted-foreground">
-                Representative render of a typical {s.title.split(" & ")[0].toLowerCase()} deliverable.
-              </p>
+              {s.photo ? (
+                <>
+                  <div data-reveal className="mt-8 aspect-[16/9] overflow-hidden rounded-xl border bg-[#0a0e0d] shadow-card">
+                    <ServiceVisual s={s} sizes="(min-width: 1024px) 55vw, 100vw" />
+                  </div>
+                  <p className="mt-2 text-[13px] text-muted-foreground">
+                    {s.media
+                      ? `Representative render of a typical ${s.label.toLowerCase()} deliverable.`
+                      : `Illustration of a typical ${s.label.toLowerCase()} deliverable.`}
+                  </p>
+                </>
+              ) : null}
             </div>
 
             <aside data-reveal className="self-start rounded-xl border bg-canvas p-6 sm:p-7 lg:sticky lg:top-28">
@@ -175,6 +189,53 @@ export default async function ServicePage({
           </Container>
         </Section>
 
+        {s.scope ? (
+          <Section tone="carbon" grid label="Full scope">
+            <Container>
+              <SectionHeading
+                eyebrow="Full scope"
+                title="Everything this service covers."
+                intro="Take one item or the whole scope. Each is delivered to your standards and checked before hand-over."
+              />
+              <ol className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {s.scope.map((block, i) => (
+                  <li
+                    key={block.title}
+                    data-reveal
+                    style={stagger(i)}
+                    className="rounded-2xl border border-line bg-void/60 p-6"
+                  >
+                    <p className="t-mono flex items-center gap-2 text-[11px] text-fog">
+                      <span aria-hidden className={cn("size-2 rounded-full", stageDot[s.stage])} />
+                      {String(i + 1).padStart(2, "0")} · {block.title}
+                    </p>
+                    <ul className="mt-5 grid gap-3">
+                      {block.items.map((item) => (
+                        <li key={item} className="flex gap-3 text-[15px] leading-6">
+                          <span aria-hidden className={cn("mt-2 size-1.5 shrink-0 rotate-45", stageDot[s.stage])} />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ol>
+              {s.applications?.length ? (
+                <div data-reveal className="mt-10 flex flex-col gap-4 border-t border-line pt-8 lg:flex-row lg:items-start">
+                  <h3 className="t-mono shrink-0 pt-1.5 text-[11px] text-fog lg:w-44">Applications</h3>
+                  <ul className="flex flex-wrap gap-2">
+                    {s.applications.map((a) => (
+                      <li key={a} className="rounded-full border border-line px-3.5 py-1.5 text-sm">
+                        {a}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </Container>
+          </Section>
+        ) : null}
+
         {related.length ? (
           <Section tone="canvas" label="Representative projects">
             <Container>
@@ -194,11 +255,16 @@ export default async function ServicePage({
           </Section>
         ) : null}
 
-        <Section label="Other services" className="py-16 sm:py-20">
+        <Section label="Related services" className="py-16 sm:py-20">
           <Container>
-            <h2 className="font-display text-2xl font-semibold">Other services</h2>
-            <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-              {others.map((o) => (
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <h2 className="font-display text-2xl font-semibold">More in {s.category.toLowerCase()}</h2>
+              <Link href={`/services#${s.group}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-map hover:underline">
+                All {group.label.toLowerCase()} services <ArrowRight className="size-4" />
+              </Link>
+            </div>
+            <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+              {siblings.map((o) => (
                 <li key={o.slug}>
                   <Link
                     href={`/services/${o.slug}`}
@@ -206,6 +272,7 @@ export default async function ServicePage({
                   >
                     <Icon name={o.icon} className="size-5 text-brand" />
                     <span className="text-[15px] leading-snug font-semibold">{o.title}</span>
+                    <span className="text-[13px] leading-snug text-muted-foreground">{o.short}</span>
                     <ArrowRight className="mt-auto size-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
                   </Link>
                 </li>
@@ -222,6 +289,8 @@ export default async function ServicePage({
                 "@context": "https://schema.org",
                 "@type": "Service",
                 name: s.title,
+                serviceType: s.label,
+                category: `${group.label} · ${s.category}`,
                 description: s.summary,
                 provider: { "@id": `${site.url}/#organization` },
                 areaServed: site.areaServed,

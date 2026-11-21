@@ -22,7 +22,7 @@ export function PilotCTA({
 }) {
   const H = headingAs;
   return (
-    <Section id="quote" grid label="Request a quote" className="pb-28">
+    <Section id="quote" grid label="Start your project" className="pb-28">
       <div
         aria-hidden
         className="absolute top-1/3 left-1/2 -z-10 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(244,196,48,0.10),transparent)]"

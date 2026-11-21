@@ -1,15 +1,37 @@
 import type { CSSProperties, ReactNode } from "react";
 import {
+  Box,
+  BrainCircuit,
+  Bug,
   Building2,
+  Camera,
+  ChartColumn,
+  Cloud,
+  CodeXml,
+  Construction,
+  Cpu,
   Cuboid,
+  Database,
   DraftingCompass,
+  Factory,
   Flame,
+  Gamepad2,
+  Glasses,
   Globe,
+  Landmark,
   Layers,
   Map as MapIcon,
+  Megaphone,
+  Mountain,
   Network,
+  Pickaxe,
+  Plug,
   Radar,
+  RadioTower,
   ScanLine,
+  ShieldCheck,
+  Smartphone,
+  Tornado,
   type LucideProps,
 } from "lucide-react";
 import type { IconName } from "@/lib/types";
@@ -31,6 +53,28 @@ const icons: Record<IconName, React.ComponentType<LucideProps>> = {
   globe: Globe,
   radar: Radar,
   network: Network,
+  camera: Camera,
+  mountain: Mountain,
+  box: Box,
+  beam: Construction,
+  tornado: Tornado,
+  plug: Plug,
+  tower: RadioTower,
+  code: CodeXml,
+  smartphone: Smartphone,
+  cpu: Cpu,
+  gamepad: Gamepad2,
+  glasses: Glasses,
+  brain: BrainCircuit,
+  chart: ChartColumn,
+  database: Database,
+  cloud: Cloud,
+  shield: ShieldCheck,
+  bug: Bug,
+  megaphone: Megaphone,
+  factory: Factory,
+  pickaxe: Pickaxe,
+  landmark: Landmark,
 };
 
 export function Icon({ name, ...props }: { name: IconName } & LucideProps) {
@@ -81,7 +125,7 @@ export function Section({
       id={id}
       aria-label={label}
       data-theme={t === "void" ? undefined : t}
-      className={cn("relative isolate overflow-hidden py-24 sm:py-32", className)}
+      className={cn("relative isolate overflow-clip py-16 sm:py-24 lg:py-32", className)}
     >
       {grid ? (
         <div
@@ -95,7 +139,7 @@ export function Section({
 }
 
 /* ── Type ────────────────────────────────────────────────────── */
-const stageDot = { scan: "bg-scan", model: "bg-model", map: "bg-map" } as const;
+export const stageDot = { scan: "bg-scan", model: "bg-model", map: "bg-map", build: "bg-build" } as const;
 
 export function Eyebrow({
   children,

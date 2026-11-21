@@ -50,7 +50,7 @@ const pairs = [
 ];
 
 const trigger =
-  "h-10 flex-none snap-start gap-2 rounded-full px-4 text-sm text-ink/80 data-[state=active]:bg-void data-[state=active]:text-bone";
+  "h-10 min-w-0 gap-2 rounded-full px-3 text-[13px] text-ink/80 data-[state=active]:bg-void data-[state=active]:text-bone sm:flex-none sm:px-4 sm:text-sm";
 
 export function DeliverableTabs() {
   return (
@@ -63,7 +63,7 @@ export function DeliverableTabs() {
         />
 
         <Tabs defaultValue="bim" className="mt-10 gap-6">
-          <TabsList className="no-scrollbar h-auto w-full snap-x justify-start overflow-x-auto rounded-full border bg-raised p-1 sm:w-fit">
+          <TabsList className="grid h-auto w-full group-data-[orientation=horizontal]/tabs:h-auto grid-cols-2 gap-1 rounded-[22px] border bg-raised p-1 sm:flex sm:w-fit sm:gap-0 sm:rounded-full">
             {pairs.map((p) => (
               <TabsTrigger key={p.id} value={p.id} className={trigger}>
                 <p.icon aria-hidden /> {p.tab}
@@ -78,7 +78,7 @@ export function DeliverableTabs() {
             <TabsContent key={p.id} value={p.id} className="animate-fade-in">
               <div data-reveal="wipe" className="relative overflow-hidden rounded-2xl bg-void shadow-[0_30px_80px_-30px_rgba(10,14,13,0.6)]">
                 <CompareSlider before={p.before} after={p.after} />
-                <span className="glass t-mono pointer-events-none absolute top-3 left-3 z-10 rounded-full px-3 py-1 text-[11px] text-[#eceae2]">
+                <span className="t-mono pointer-events-none absolute top-3 left-3 z-10 rounded-full border border-white/15 bg-void/85 px-3 py-1 text-[11px] text-[#eceae2]">
                   Before<span className="hidden sm:inline"> · {p.before.label}</span>
                 </span>
                 <span className="t-mono pointer-events-none absolute top-3 right-3 z-10 rounded-full bg-map px-3 py-1 text-[11px] text-void">

@@ -1,6 +1,7 @@
 import { Film } from "@/components/three/film/film";
 import { DeliverableTabs } from "@/components/sections/deliverable-tabs";
 import { ScrollBand } from "@/components/sections/scroll-band";
+import { ServiceAtlas } from "@/components/sections/service-atlas";
 import { WorkPreview } from "@/components/sections/work-preview";
 import { DataPricing } from "@/components/sections/data-pricing";
 import { Faq, faqLd, homeFaqs } from "@/components/sections/faq";
@@ -14,6 +15,7 @@ export default function HomePage() {
       <div>
         <Film />
         <ScrollBand />
+        <ServiceAtlas id="services" />
         <DeliverableTabs />
         <WorkPreview />
         <DataPricing />

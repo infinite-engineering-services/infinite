@@ -31,12 +31,12 @@ export default function ContactPage() {
   return (
     <PageTransition>
       <div>
-        <Section tone="canvas" label="Request a quote" className="pt-28 sm:pt-36">
+        <Section tone="canvas" label="Start your project" className="pt-28 sm:pt-36">
           <Container className="grid gap-10 lg:grid-cols-[1.35fr_1fr] lg:gap-14">
             {/* Form first: on mobile it is the first thing after the heading */}
             <div>
               <h1 className="font-display text-[clamp(2.2rem,4.5vw,3.25rem)] leading-[1.06] font-semibold text-balance">
-                Request a quote.
+                Start your project.
               </h1>
               <p className="mt-4 max-w-xl text-lg leading-8 text-muted-foreground">
                 Four short fields to start. {promises.reply} {promises.nda}

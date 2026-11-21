@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Menu, Phone } from "lucide-react";
 import { Logo, WhatsAppIcon } from "@/components/brand/logo";
-import { Icon } from "@/components/brand/primitives";
+import { Icon, stageDot } from "@/components/brand/primitives";
 import {
   Accordion,
   AccordionContent,
@@ -33,7 +33,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cta, nav, site, whatsappLink } from "@/config/site";
-import { services } from "@/content/services";
+import { serviceGroups, services } from "@/content/services";
 import { track } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
@@ -106,42 +106,52 @@ export function Header() {
               >
                 Services
               </NavigationMenuTrigger>
-              <NavigationMenuContent className="glass !rounded-2xl !border-ink/10 !bg-[rgba(14,19,17,0.92)]">
-                <ul className="grid w-[660px] grid-cols-2 gap-1 p-2">
-                  {services.map((s) => (
-                    <li key={s.slug}>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href={`/services/${s.slug}`}
-                          className="flex flex-row items-start gap-3 rounded-xl p-3 hover:bg-ink/[0.06]"
-                        >
-                          <span className="grid size-9 shrink-0 place-items-center rounded-lg border bg-ink/[0.04] text-map">
-                            <Icon name={s.icon} className="size-[18px]" />
-                          </span>
-                          <span>
-                            <span className="block text-sm font-semibold text-foreground">
-                              {s.title}
-                            </span>
-                            <span className="mt-0.5 block text-[13px] leading-snug text-muted-foreground">
-                              {s.short}
-                            </span>
-                          </span>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
+              <NavigationMenuContent className="glass !rounded-2xl !border-ink/10 !bg-[rgba(14,19,17,0.94)]">
+                <div className="grid w-[min(920px,calc(100vw-4rem))] grid-cols-2 gap-x-2 p-3">
+                  {serviceGroups.map((g) => (
+                    <div key={g.group} className="rounded-xl p-2">
+                      <p className="t-mono px-2 pb-2 text-[11px] text-fog">
+                        {g.title} · {String(g.count).padStart(2, "0")}
+                      </p>
+                      <div className="grid grid-cols-2 gap-x-1 gap-y-3">
+                        {g.categories.map((c) => (
+                          <div key={c.name} className={cn(c.services.length > 4 && "row-span-2")}>
+                            <p className="flex items-center gap-1.5 px-2 pb-1 text-[12px] font-semibold text-foreground/80">
+                              <span aria-hidden className={cn("size-1.5 rounded-full", stageDot[c.stage])} />
+                              {c.name}
+                            </p>
+                            <ul>
+                              {c.services.map((s) => (
+                                <li key={s.slug}>
+                                  <NavigationMenuLink asChild>
+                                    <Link
+                                      href={`/services/${s.slug}`}
+                                      className="flex flex-row items-center gap-2.5 rounded-lg px-2 py-1.5 text-[13.5px] text-foreground/90 hover:bg-ink/[0.06] hover:text-foreground"
+                                    >
+                                      <Icon name={s.icon} className="size-4 shrink-0 text-fog" />
+                                      {s.label}
+                                    </Link>
+                                  </NavigationMenuLink>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   ))}
-                  <li className="col-span-2 mt-1 border-t pt-2">
+                  <div className="col-span-2 mt-1 border-t pt-2">
                     <NavigationMenuLink asChild>
                       <Link
                         href="/services"
                         className="flex-row items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium hover:bg-ink/[0.06]"
                       >
-                        All services and how they connect
+                        All {services.length} services, and how they connect
                         <ArrowRight className="size-4 text-map" />
                       </Link>
                     </NavigationMenuLink>
-                  </li>
-                </ul>
+                  </div>
+                </div>
               </NavigationMenuContent>
             </NavigationMenuItem>
             {links.map((item) => (
@@ -215,21 +225,36 @@ export function Header() {
                     <AccordionTrigger className="py-4 font-display text-2xl font-medium hover:no-underline">
                       Services
                     </AccordionTrigger>
-                    <AccordionContent className="grid gap-1 pb-3">
-                      {services.map((s) => (
-                        <SheetClose asChild key={s.slug}>
-                          <Link
-                            href={`/services/${s.slug}`}
-                            className="flex items-center gap-3 rounded-xl px-2 py-2.5 text-[15px] hover:bg-ink/[0.06]"
-                          >
-                            <Icon
-                              name={s.icon}
-                              className="size-4 shrink-0 text-map"
-                            />
-                            {s.title}
-                          </Link>
-                        </SheetClose>
+                    <AccordionContent className="grid gap-5 pb-4">
+                      {serviceGroups.map((g) => (
+                        <div key={g.group}>
+                          <p className="t-mono px-2 text-[11px] text-fog">{g.title}</p>
+                          {g.categories.map((c) => (
+                            <div key={c.name} className="mt-3">
+                              <p className="flex items-center gap-1.5 px-2 pb-1 text-[12px] font-semibold text-foreground/70">
+                                <span aria-hidden className={cn("size-1.5 rounded-full", stageDot[c.stage])} />
+                                {c.name}
+                              </p>
+                              {c.services.map((s) => (
+                                <SheetClose asChild key={s.slug}>
+                                  <Link
+                                    href={`/services/${s.slug}`}
+                                    className="flex items-center gap-3 rounded-xl px-2 py-2 text-[15px] hover:bg-ink/[0.06]"
+                                  >
+                                    <Icon name={s.icon} className="size-4 shrink-0 text-map" />
+                                    {s.label}
+                                  </Link>
+                                </SheetClose>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
                       ))}
+                      <SheetClose asChild>
+                        <Link href="/services" className="flex items-center gap-2 px-2 text-[15px] font-medium text-map">
+                          All {services.length} services <ArrowRight className="size-4" />
+                        </Link>
+                      </SheetClose>
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>

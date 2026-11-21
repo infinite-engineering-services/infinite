@@ -27,7 +27,7 @@ No env vars are needed to run. The quote form only sends email when `RESEND_API_
 npm run build
 ```
 
-Stop any running `next start` first (see Gotchas); a running `next dev` is fine, it builds into `.next/dev`. The build takes about 30 s, copies the MapLibre worker into `public/vendor/` in its `prebuild` hook and prerenders 28 static pages.
+Stop any running `next start` first (see Gotchas); a running `next dev` is fine, it builds into `.next/dev`. The build takes about 30 s, copies the MapLibre worker into `public/vendor/` in its `prebuild` hook and prerenders 48 static pages (26 of them service pages).
 
 ## Run (agent path)
 
@@ -103,7 +103,7 @@ Screenshots → `.run/shots/<name>.png`. Server log → `.run/server.log`. **Ope
 
 Flags: `--port 3100` (default), `--dev` (run `next dev` instead of the production build), `--no-serve` (never start a server).
 
-Section ids on the homepage: the 3D film `#film` with chapters `#top`, `#scan`, `#model`, `#map`; then `#proof` (paper: compare tabs + live map tab, map panel `#gis-demo`), `#work`, `#pilot`, `#faq` (paper), `#quote` (form).
+Section ids on the homepage: the 3D film `#film` with chapters `#top`, `#scan`, `#model`, `#map`; then `#services` (the service atlas: Engineering / Technology toggle, preview panel on ≥1024 px), `#proof` (paper: compare tabs + live map tab, map panel `#gis-demo`), `#work`, `#pilot`, `#faq` (paper), `#quote` (form).
 
 ### The 3D film (homepage)
 
@@ -228,6 +228,10 @@ Add `--preset=desktop` for desktop. Measured 2026-11-18: accessibility, best pra
 - **Do not use Edge's own `--headless --screenshot --window-size=390,…` for mobile shots.** The window cannot go below about 500 px, so the page looks cut off on the right. The driver's `viewport mobile` emulates the width properly.
 - **A headless screenshot of the 2D-canvas `facade` studio scene can come out blank** under the swiftshader flags. `scripts/capture-studio.mjs` reads that canvas with `toDataURL` instead.
 - **`text h1` prints headings twice** ("…one team.…one team."). Kinetic headings render an `sr-only` copy plus the split, animated words. That is intended.
+- **Hover previews: focus the row instead.** The driver has no hover command. The atlas swaps its preview on focus too: `eval (document.querySelector('#services a[href="/services/cyber-security"]').focus(), 1)`.
+- **`Section` must not use `overflow-hidden`.** It makes every section a scroll container, which silently breaks `position: sticky` inside it (atlas preview, FAQ heading). It uses `overflow-clip`.
+- **The mobile menu button can report "Node is either not clickable"** under the floating header. Open it with `eval (document.querySelector('[aria-label="Open menu"]').click(), 1)`.
+- **A temporary route added under `next dev` leaves stale types in `.next/dev/types`.** After deleting the route, `npm run build` fails with `Cannot find module '../../../app/<route>/page.js'`; delete `.next/dev/types` and rebuild.
 - **This is Next.js 16 with Cache Components.** `export const dynamicParams` is a build error, and `next/dynamic` with `ssr: false` must live in a client component. Read `node_modules/next/dist/docs/` before changing routing or caching code.
 
 ## Troubleshooting

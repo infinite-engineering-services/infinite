@@ -1,5 +1,6 @@
 import type { Thing, WithContext } from "schema-dts";
 import { site } from "@/config/site";
+import { serviceGroups } from "@/content/services";
 
 export function JsonLd<T extends Thing>({
   data,
@@ -25,7 +26,7 @@ export function organizationLd() {
     name: site.legalName,
     alternateName: site.name,
     url: site.url,
-    logo: `${site.url}/brand/infinite-mark.png`,
+    logo: `${site.url}/brand/infinite-logo.png`,
     image: `${site.url}/opengraph-image`,
     description: site.description,
     email: site.email,
@@ -55,7 +56,38 @@ export function organizationLd() {
       "Gas pipeline GIS",
       "City gas distribution",
       "BIM to GIS",
+      "Photogrammetry",
+      "LiDAR data processing",
+      "Structural steel detailing",
+      "3D CAD modelling",
+      "Utility GIS mapping",
+      "Telecom network design",
+      "Web and mobile application development",
+      "Data science and machine learning",
+      "SAP",
+      "Cloud computing",
+      "Cyber security",
+      "Software testing",
+      "Digital marketing",
     ],
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Services",
+      itemListElement: serviceGroups.map((g) => ({
+        "@type": "OfferCatalog",
+        name: g.title,
+        itemListElement: g.categories.flatMap((c) =>
+          c.services.map((s) => ({
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: s.title,
+              url: `${site.url}/services/${s.slug}`,
+            },
+          })),
+        ),
+      })),
+    },
   } as const;
 }
 

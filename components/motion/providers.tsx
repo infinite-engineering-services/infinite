@@ -10,16 +10,27 @@ import { useEffect } from "react";
 export function RevealObserver() {
   useEffect(() => {
     const seen = new WeakSet<Element>();
+    // A "wipe" element starts fully clipped (clip-path), and Chrome counts its
+    // own clip-path, so it would never intersect: watch its parent instead.
+    const targetOf = new Map<Element, HTMLElement>();
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (!e.isIntersecting) continue;
-          (e.target as HTMLElement).dataset.in = "";
+          (targetOf.get(e.target) ?? (e.target as HTMLElement)).dataset.in = "";
+          targetOf.delete(e.target);
           io.unobserve(e.target);
         }
       },
       { rootMargin: "0px 0px -12% 0px", threshold: 0.05 },
     );
+    const watch = (el: HTMLElement) => {
+      const proxy = el.dataset.reveal === "wipe" ? el.parentElement : null;
+      if (proxy && !targetOf.has(proxy)) {
+        targetOf.set(proxy, el);
+        io.observe(proxy);
+      } else io.observe(el);
+    };
 
     const scan = () => {
       const vh = window.innerHeight;
@@ -31,7 +42,7 @@ export function RevealObserver() {
           const r = el.getBoundingClientRect();
           // Already in (or above) the viewport: show immediately, no animation
           if (r.top < vh * 0.92) el.dataset.in = "";
-          else io.observe(el);
+          else watch(el);
         });
     };
 
