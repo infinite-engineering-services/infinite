@@ -2,9 +2,9 @@
 import { cn } from "@/lib/utils";
 
 /*
- * The company logo (supplied artwork): a flat blue infinity ribbon around a
- * tower, "INFINITE", and "Design • Model • Build Beyond". The dark-background
- * files lift the navy parts so they stay visible on the site's black.
+ * The company logo (supplied artwork): a glossy blue infinity ribbon around a
+ * tower and a steel frame, "INFINITE", and "Design • Model • Build Beyond".
+ * The dark-background files use light lettering so it stays visible on black.
  * Files in public/brand/:
  *   infinite-logo-color.png  original, for light backgrounds
  *   infinite-logo-dark.png   same artwork with light lettering, for dark backgrounds
@@ -18,7 +18,7 @@ export function LogoMark({ className, onLight = false }: { className?: string; o
     <img
       src={onLight ? "/brand/infinite-emblem-color.webp" : "/brand/infinite-emblem.webp"}
       alt=""
-      width={285}
+      width={374}
       height={132}
       className={cn("h-10 w-auto", className)}
     />
@@ -35,14 +35,14 @@ export function Logo({ className }: { className?: string }) {
       <img
         src="/brand/infinite-word.webp"
         alt=""
-        width={478}
+        width={587}
         height={54}
         className="h-[14px] w-auto paper:hidden lg:h-[15px]"
       />
       <img
         src="/brand/infinite-word-color.webp"
         alt=""
-        width={478}
+        width={587}
         height={54}
         className="hidden h-[14px] w-auto paper:block lg:h-[15px]"
       />
@@ -58,7 +58,7 @@ export function LogoFull({ className }: { className?: string }) {
       src="/brand/infinite-logo-dark.webp"
       alt="Infinite: Design, Model, Build Beyond"
       width={640}
-      height={303}
+      height={264}
       className={cn("h-auto w-60", className)}
     />
   );

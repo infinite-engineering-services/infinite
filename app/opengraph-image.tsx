@@ -38,7 +38,7 @@ export default async function OgImage() {
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse renders plain img */}
-        <img src={logo} alt="" width={262} height={124} />
+        <img src={logo} alt="" width={291} height={120} />
       </div>
       <div
         style={{

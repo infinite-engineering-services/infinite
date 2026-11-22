@@ -12,8 +12,8 @@ export const site = {
   description:
     "Engineering and technology services from one team: laser scanning, CAD, Scan-to-BIM, steel detailing and GIS, plus web, mobile, AI, cloud and security. Specialists in pipeline and utility GIS.",
 
-  // PLACEHOLDER: production domain
-  url: "https://www.infinite-engineering.in",
+  // Production domain (apex; www redirects here)
+  url: "https://infiniteengineeringservices.com",
 
   // From the company letterhead
   email: "infiniteengineeringservice7@gmail.com",
@@ -45,7 +45,6 @@ export const site = {
 
 /** Flags for anything in this file that still needs real data. */
 export const sitePlaceholders = [
-  "url",
   "whatsapp (assumed same as phone)",
   "socials.linkedin",
 ];
