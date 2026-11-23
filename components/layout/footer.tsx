@@ -3,7 +3,6 @@ import { ArrowRight, Clock, Mail, MapPin, Phone } from "lucide-react";
 import { LogoFull, LinkedInIcon, WhatsAppIcon } from "@/components/brand/logo";
 import { cta, nav, site, whatsappLink } from "@/config/site";
 import { serviceGroups } from "@/content/services";
-import { photos } from "@/content/photos";
 
 export function Footer() {
   const heading = "t-mono mb-4 text-[11px] tracking-[0.12em] text-fog uppercase";
@@ -133,23 +132,6 @@ export function Footer() {
             </span>
           </p>
         </div>
-        <p className="pb-2 text-[12px] leading-5 text-fog/70">
-          Renders, scans and maps on this site are our own demonstration work. Photography from
-          Unsplash by{" "}
-          {Object.values(photos).map((p, i, all) => (
-            <span key={p.href}>
-              <a
-                href={p.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline-offset-2 hover:text-ink hover:underline"
-              >
-                {p.credit}
-              </a>
-              {i < all.length - 2 ? ", " : i === all.length - 2 ? " and " : "."}
-            </span>
-          ))}
-        </p>
       </div>
     </footer>
   );
