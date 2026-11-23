@@ -2,11 +2,16 @@ import { z } from "zod";
 
 export const serviceOptions = [
   "Laser scanning / point cloud",
+  "LiDAR / photogrammetry",
   "CAD drafting",
+  "3D CAD modelling",
   "Scan-to-BIM",
+  "Steel detailing",
   "GIS mapping",
-  "BIM-to-GIS",
   "Gas pipeline / CGD GIS",
+  "Telecom design",
+  "BIM-to-GIS",
+  "Technology (web, app, IT)",
   "Other",
 ] as const;
 

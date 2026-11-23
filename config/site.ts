@@ -12,8 +12,8 @@ export const site = {
   description:
     "Engineering and technology services from one team: laser scanning, CAD, Scan-to-BIM, steel detailing and GIS, plus web, mobile, AI, cloud and security. Specialists in pipeline and utility GIS.",
 
-  // Production domain (apex; www redirects here)
-  url: "https://infiniteengineeringservices.com",
+  // Production domain: Vercel serves www as primary (the bare domain 308-redirects to it)
+  url: "https://www.infiniteengineeringservices.com",
 
   // From the company letterhead
   email: "infiniteengineeringservice7@gmail.com",

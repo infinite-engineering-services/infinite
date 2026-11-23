@@ -134,7 +134,7 @@ export function QuoteForm() {
 
   return (
     <form onSubmit={handleSubmit(onValid, onInvalid)} noValidate className="grid gap-5">
-      <p className="t-mono -mb-1 text-[11px] text-muted-foreground">Sheet 1 of 2 · four fields</p>
+      <p className="t-mono -mb-1 text-[11px] text-muted-foreground">Step 1 of 2 · step 2 is optional</p>
       {/* Honeypot: hidden from people and assistive tech */}
       <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
         <label>
@@ -335,7 +335,7 @@ function Details({ refId, lead }: { refId: string; lead: Lead | null }) {
       ) : (
         <form onSubmit={handleSubmit(onValid)} noValidate className="grid gap-5 rounded-2xl border bg-ink/[0.03] p-5 sm:p-6">
           <div>
-            <p className="t-mono text-[11px] text-muted-foreground">Sheet 2 of 2 · optional</p>
+            <p className="t-mono text-[11px] text-muted-foreground">Step 2 of 2 · optional</p>
             <h4 className="mt-1 font-display text-xl font-medium">Help us scope faster</h4>
             <p className="mt-1 text-[14px] text-muted-foreground">Every field can be left empty.</p>
           </div>

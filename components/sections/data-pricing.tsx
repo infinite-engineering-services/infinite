@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { cta, pilot, pricingModels, promises, timezones } from "@/config/site";
 import { cn } from "@/lib/utils";
 
-const steps = ["Share a sample", "Sign NDA", "Pilot delivery", "Full production"];
+const steps = ["Sign NDA", "Share a sample", "Pilot delivery", "Full production"];
 
 /**
  * The risk-removal band: the pilot project, then how work is priced and how
